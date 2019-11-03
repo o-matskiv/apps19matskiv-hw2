@@ -30,7 +30,7 @@ public class ImmutableArrayListTest {
     @Test
     public void testArrayAddIndex() {
         ImmutableList result = first_array.add(4, 8);
-        Object[] expected = new Object[]{10,9,5,3,8,6,7,20};
+        Object[] expected = new Object[]{10,9,5,3,8,6,7};
         assertArrayEquals(first_array.toArray(), new Object[]{10,9,5,3,6,7});
         assertArrayEquals(result.toArray(), expected);
 
@@ -41,18 +41,12 @@ public class ImmutableArrayListTest {
         ImmutableList result = first_array.add(10, 10);
     }
 
-    @Test
-    public void testArrayAddAll() {
-        ImmutableList result = first_array.addAll(second_array.toArray());
-        Object[] expected = new Object[]{10,9,5,3,6,7,1, 2, 3, 4, 5};
-        assertArrayEquals(result.toArray(), expected);
-        assertArrayEquals(first_array.toArray(), new Object[]{10,9,5,3,6,7});
-    }
+
 
     @Test
     public void testArrayAddAllIndex() {
         ImmutableList actual = first_array.addAll(1, second_array.toArray());
-        Object[] expected = new Object[]{1, 2, 3, 4, 5,10,9,5,3,6,7};
+        Object[] expected = new Object[]{10,1, 2, 3, 4, 5,9,5,3,6,7};
         assertArrayEquals(actual.toArray(), expected);
         assertArrayEquals(first_array.toArray(), new Object[]{10,9,5,3,6,7});
     }
@@ -97,7 +91,7 @@ public class ImmutableArrayListTest {
     @Test
     public void testArrayIndexOfExists() {
         int result = first_array.indexOf(5);
-        assertEquals(result, 3);
+        assertEquals(result, 2);
         assertArrayEquals(first_array.toArray(), new Object[]{10,9,5,3,6,7});    }
 
     @Test
@@ -119,13 +113,13 @@ public class ImmutableArrayListTest {
     @Test
     public void testArrayClear() {
         ImmutableList result = first_array.clear();
-        assertArrayEquals(result.toArray(), new Object[0]);
+        assertArrayEquals(result.toArray(), new ImmutableArrayList().toArray());
         assertArrayEquals(first_array.toArray(), new Object[]{10,9,5,3,6,7});    }
 
     @Test
     public void testArrayClearEmpty() {
         ImmutableList result = empty_array.clear();
-        assertArrayEquals(result.toArray(), new Object[0]);
+        assertArrayEquals(result.toArray(), new ImmutableArrayList().toArray());
     }
 
     @Test
