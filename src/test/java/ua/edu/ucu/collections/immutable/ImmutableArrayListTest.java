@@ -1,133 +1,146 @@
 package ua.edu.ucu.collections.immutable;
-import java.util.Arrays;
 
-public class ImmutableArrayList implements ImmutableList{
-    private Object[] array;
-    private int len;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-    public ImmutableArrayList() {
-        array = new Object[10];
-        this.len = 0;
+public class ImmutableArrayListTest {
+    private ImmutableArrayList first_array;
+    private ImmutableArrayList second_array;
+    private ImmutableArrayList empty_array;
+
+
+    @Before
+    public void setUp() throws Exception {
+        first_array = new ImmutableArrayList(new Object[]{10,9,5,3,6,7});
+        second_array = new ImmutableArrayList(new Object[]{1, 2, 3, 4, 5});
+        empty_array = new ImmutableArrayList();
+
     }
 
-    public ImmutableArrayList(int size) {
-        array = new Object[size];
-        this.len = 0;
+    @Test
+    public void testArrayAdd() {
+        ImmutableList result = first_array.add(20);
+        Object[] expected = new Object[]{10,9,5,3,6,7,20};
+        assertArrayEquals(first_array.toArray(), new Object[]{10,9,5,3,6,7});
+        assertArrayEquals(result.toArray(), expected);
+
     }
 
-    public ImmutableArrayList(Object[] array) {
-        this.array = new Object[array.length];
-        System.arraycopy(array, 0, this.array, 0, array.length);
-        this.len = array.length;
+    @Test
+    public void testArrayAddIndex() {
+        ImmutableList result = first_array.add(4, 8);
+        Object[] expected = new Object[]{10,9,5,3,8,6,7};
+        assertArrayEquals(first_array.toArray(), new Object[]{10,9,5,3,6,7});
+        assertArrayEquals(result.toArray(), expected);
+
     }
 
-
-    @Override
-    public ImmutableList add(Object e) {
-        return add(this.len, e);
-    }
-
-    @Override
-    public ImmutableList add(int index, Object e) {
-        if (index > this.len || index < 0) {
-            throw new IndexOutOfBoundsException();
-        }
-        Object[] array = new Object[1];
-        array[0] = e;
-        return this.addAll(index, array);
-    }
-
-    @Override
-    public ImmutableList addAll(Object[] c) {
-        ImmutableArrayList new_array = new ImmutableArrayList(this.len + c.length);
-        for (int i = 0; i < this.array.length; i++) {
-            new_array.array[i] = this.array[i];
-        }
-        return new_array.addAll(this.len-1, c);
-    }
-
-    @Override
-    public ImmutableList addAll(int index, Object[] c) {
-        if (index < 0 || index > array.length) {
-            throw new IndexOutOfBoundsException();
-        }
-        Object[] new_array = new Object[array.length + c.length];
-        System.arraycopy(array, 0, new_array, 0, index);
-        System.arraycopy(c, 0, new_array, index, c.length);
-        System.arraycopy(array, index, new_array, index + c.length,
-                array.length - index);
-        return new ImmutableArrayList(new_array);
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testArrayAddException() {
+        ImmutableList result = first_array.add(10, 10);
     }
 
 
-    @Override
-    public Object get(int index) {
-        if (index < this.len || index > 0) {
-            return this.array[index];
-        }
-        throw new IndexOutOfBoundsException();
+
+    @Test
+    public void testArrayAddAllIndex() {
+        ImmutableList actual = first_array.addAll(1, second_array.toArray());
+        Object[] expected = new Object[]{10,1, 2, 3, 4, 5,9,5,3,6,7};
+        assertArrayEquals(actual.toArray(), expected);
+        assertArrayEquals(first_array.toArray(), new Object[]{10,9,5,3,6,7});
     }
 
-    @Override
-    public ImmutableList remove(int index) {
-        if (index < this.len  || index > 0) {
-            Object[] new_array = new Object[array.length - 1];
-            System.arraycopy(array, 0, new_array, 0, index);
-            System.arraycopy(array, index + 1, new_array, index, array.length - index - 1);
-            return new ImmutableArrayList(new_array);
-        }
-        throw new IndexOutOfBoundsException();
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testArrayAddAllIndexOutOfRange() {
+        ImmutableList actual = first_array.addAll(10, new Object[] {1,2,3,4});
     }
 
-    @Override
-    public ImmutableList set(int index, Object e) {
-        if (index < this.len) {
-            Object[] new_array = array.clone();
-            new_array[index] = e;
-            return new ImmutableArrayList(new_array);
-        }
-        throw new IndexOutOfBoundsException();
+    @Test
+    public void testArrayGet() {
+        assertEquals(first_array.get(3), 3);
+        assertArrayEquals(first_array.toArray(), new Object[]{10,9,5,3,6,7});    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testArrayGetException() {
+        first_array.get(10);
     }
 
-    @Override
-    public int indexOf(Object e) {
-        for (int i = 0; i < this.array.length; i++) {
-            if (this.array[i] == e) {
-                return i;
-            }
-        }
-        return -1;
+    @Test
+    public void testArrayRemove() {
+        ImmutableList actual = first_array.remove(2);
+        assertArrayEquals(actual.toArray(), new Object[]{10,9,3,6,7});
+        assertArrayEquals(first_array.toArray(), new Object[]{10,9,5,3,6,7});    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testArrayRemoveException() {
+        ImmutableList actual = first_array.remove(-1);
     }
 
-    @Override
-    public int size() {
-        return this.len;
+    @Test
+    public void testArraySet() {
+        ImmutableList actual = first_array.set(2, 10);
+        assertArrayEquals(actual.toArray(), new Object[]{10,9,10,3,6,7});
+        assertArrayEquals(first_array.toArray(), new Object[]{10,9,5,3,6,7});    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testArraySetException() {
+        ImmutableList actual = first_array.set(-1, 1);
     }
 
-    @Override
-    public ImmutableList clear() {
-        return new ImmutableArrayList();
+    @Test
+    public void testArrayIndexOfExists() {
+        int result = first_array.indexOf(5);
+        assertEquals(result, 2);
+        assertArrayEquals(first_array.toArray(), new Object[]{10,9,5,3,6,7});    }
+
+    @Test
+    public void testArrayIndexOfNotExist() {
+        int result = first_array.indexOf(100);
+        assertEquals(result, -1);
+        assertArrayEquals(first_array.toArray(), new Object[]{10,9,5,3,6,7});    }
+
+    @Test
+    public void testArraySize() {
+        assertEquals(first_array.size(), 6);
+        assertArrayEquals(first_array.toArray(), new Object[]{10,9,5,3,6,7});    }
+
+    @Test
+    public void testArraySizeEmpty() {
+        assertEquals(empty_array.size(), 0);
     }
 
-    @Override
-    public boolean isEmpty() {
-        return this.len == 0;
+    @Test
+    public void testArrayClear() {
+        ImmutableList result = first_array.clear();
+        assertArrayEquals(result.toArray(), new ImmutableArrayList().toArray());
+        assertArrayEquals(first_array.toArray(), new Object[]{10,9,5,3,6,7});    }
+
+    @Test
+    public void testArrayClearEmpty() {
+        ImmutableList result = empty_array.clear();
+        assertArrayEquals(result.toArray(), new ImmutableArrayList().toArray());
     }
 
-    @Override
-    public Object[] toArray() {
-        return array.clone();
+    @Test
+    public void testIsEmpty() {
+        assertFalse(first_array.isEmpty());
     }
 
-    @Override
-    public String toString() {
-        if (this.isEmpty()){
-            return "";
-        }
-        String res  = Integer.toString((Integer) this.array[0]);
-        for (int i = 1; i < this.len; i++) {
-            res =  res + ", "+ Integer.toString((Integer) this.array[i]);
-        }
-        return res;
+    @Test
+    public void testIsNonEmpty() {
+        assertTrue(empty_array.isEmpty());
     }
+
+    @Test
+    public void testToStringEmpty() {
+        assertEquals(empty_array.toString(), "");
+    }
+
+    @Test
+    public void testToString() {
+        assertEquals(first_array.toString(), "10, 9, 5, 3, 6, 7");
+    }
+
+
 }
