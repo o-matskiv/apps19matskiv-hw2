@@ -24,9 +24,7 @@ public class ImmutableArrayList implements ImmutableList{
 
     @Override
     public ImmutableList add(Object e) {
-        Object[] array = new Object[1];
-        array[0] = e;
-        return this.addAll(array);
+        return add(this.len, e);
     }
 
     @Override
@@ -42,19 +40,22 @@ public class ImmutableArrayList implements ImmutableList{
     @Override
     public ImmutableList addAll(Object[] c) {
         ImmutableArrayList new_array = new ImmutableArrayList(this.len + c.length);
-        return new_array.addAll(array.length, c);
+        for (int i = 0; i < this.array.length; i++) {
+            new_array.array[i] = this.array[i];
+        }
+        return new_array.addAll(this.len-1, c);
     }
 
     @Override
     public ImmutableList addAll(int index, Object[] c) {
-        if (index > this.len) {
+        if (index < 0 || index > array.length) {
             throw new IndexOutOfBoundsException();
         }
-        Object[] new_array = new Object[this.len + c.length];
-        System.arraycopy(this.array, 0, new_array, 0, index);
+        Object[] new_array = new Object[array.length + c.length];
+        System.arraycopy(array, 0, new_array, 0, index);
         System.arraycopy(c, 0, new_array, index, c.length);
-        System.arraycopy(this.array, index, new_array, index + c.length,
-                this.array.length - index);
+        System.arraycopy(array, index, new_array, index + c.length,
+                array.length - index);
         return new ImmutableArrayList(new_array);
     }
 
@@ -120,7 +121,13 @@ public class ImmutableArrayList implements ImmutableList{
 
     @Override
     public String toString() {
-        String str = Arrays.toString(toArray());
-        return str.substring(1, str.length() - 1);
+        if (this.isEmpty()){
+            return "";
+        }
+        String res  = Integer.toString((Integer) this.array[0]);
+        for (int i = 1; i < this.len; i++) {
+            res =  res + ", "+ Integer.toString((Integer) this.array[i]);
+        }
+        return res;
     }
 }
